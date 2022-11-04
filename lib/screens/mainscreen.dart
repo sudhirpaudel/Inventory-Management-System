@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inventorymanagementsystem/config/time_container.dart';
 import 'package:inventorymanagementsystem/screens/customersPage/customes_main_screen.dart';
 import 'package:inventorymanagementsystem/screens/homePage/home_main_screen.dart';
 import 'package:inventorymanagementsystem/screens/inventoryPage/inventory_main_screen.dart';
@@ -16,7 +17,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int statePage = 5;
+  int statePage = 2;
   @override
   Widget build(BuildContext context) {
     List<Widget> page = const [
@@ -41,6 +42,7 @@ class _MainScreenState extends State<MainScreen> {
               children: [
                 SizedBox(
                   height: height / 8 - 15,
+                 // child: const TimeContainer(),
                   // child: Center(
                   //   child: Text(
                   //     'FITMONK Inc.',

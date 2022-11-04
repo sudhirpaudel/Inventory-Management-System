@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
 import 'package:inventorymanagementsystem/screens/purchasePage/purchase_info.dart';
 
+import 'add_purchase_page.dart';
+
 class PurchaseMainPage extends StatefulWidget {
   const PurchaseMainPage({super.key});
 
@@ -23,6 +25,7 @@ class _PurchaseMainPageState extends State<PurchaseMainPage> {
       ),
       child: Column(
         children: [
+         
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             height: height / 8 - 40,
@@ -35,7 +38,11 @@ class _PurchaseMainPageState extends State<PurchaseMainPage> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) => const AddPurchasePage());
+                  },
                   child: Container(
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 20),

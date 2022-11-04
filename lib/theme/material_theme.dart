@@ -45,6 +45,11 @@ final materialAppTheme = MaterialAppData(
         fontWeight: FontWeight.w500,
         color: primaryColor,
       ),
+      displayMedium: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w400,
+        color: primaryColor,
+      ),
       
     
     ),

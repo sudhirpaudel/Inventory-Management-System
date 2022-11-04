@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/screens/customersPage/add_customer_page.dart';
 
 import 'customer_info.dart';
 
@@ -36,7 +37,11 @@ class _CustomerMainPageState extends State<CustomerMainPage> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) => const AddCustomerPage());
+                  },
                   child: Container(
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 20),

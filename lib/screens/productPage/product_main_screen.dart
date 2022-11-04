@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/screens/productPage/add_product_page.dart';
 import 'package:inventorymanagementsystem/screens/productPage/product_info.dart';
 
 class ProductMainScreen extends StatefulWidget {
@@ -35,7 +36,12 @@ class _ProductMainScreenState extends State<ProductMainScreen> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                      context: context, 
+                      builder: (_)=> const AddProductPage()
+                      );
+                  },
                   child: Container(
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 20),

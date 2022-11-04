@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
 import 'package:inventorymanagementsystem/screens/salePage/sales_info.dart';
 
+import 'add_sales_page.dart';
+
 class SalesMainPage extends StatefulWidget {
   const SalesMainPage({super.key});
 
@@ -35,7 +37,10 @@ class _SalesMainPageState extends State<SalesMainPage> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                        context: context, builder: (_) => const AddSalesPage());
+                  },
                   child: Container(
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
