@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:inventorymanagementsystem/config/time_container.dart';
+import 'package:inventorymanagementsystem/bloc/products_bloc/products_bloc.dart';
 import 'package:inventorymanagementsystem/screens/customersPage/customes_main_screen.dart';
 import 'package:inventorymanagementsystem/screens/homePage/home_main_screen.dart';
 import 'package:inventorymanagementsystem/screens/inventoryPage/inventory_main_screen.dart';
 import 'package:inventorymanagementsystem/screens/productPage/product_main_screen.dart';
 import 'package:inventorymanagementsystem/screens/purchasePage/purchase_main_screen.dart';
 import 'package:inventorymanagementsystem/screens/salePage/sales_main_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/client/client_bloc.dart';
 import '../config/colors.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,7 +19,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int statePage = 2;
+  int statePage = 0;
   @override
   Widget build(BuildContext context) {
     List<Widget> page = const [
@@ -32,123 +34,154 @@ class _MainScreenState extends State<MainScreen> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Row(
-        children: [
-          Container(
-            height: height,
-            width: width / 6,
-            color: primaryColor,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: height / 8 - 15,
-                 // child: const TimeContainer(),
-                  // child: Center(
-                  //   child: Text(
-                  //     'FITMONK Inc.',
-                  //     style: Theme.of(context).textTheme.titleLarge,
-                  //   ),
-                  // ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      statePage = 0;
-                    });
-                  },
-                  child: nameBox(
-                    context,
-                    'HOME',
-                    Icons.home,
-                    0,
-                    statePage,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      statePage = 1;
-                    });
-                  },
-                  child: nameBox(
-                    context,
-                    'SALES',
-                    Icons.shopping_cart,
-                    1,
-                    statePage,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      statePage = 2;
-                    });
-                  },
-                  child: nameBox(
-                    context,
-                    'PURCHASE',
-                    Icons.money,
-                    2,
-                    statePage,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      statePage = 3;
-                    });
-                  },
-                  child: nameBox(
-                    context,
-                    'PRODUCTS',
-                    Icons.production_quantity_limits,
-                    3,
-                    statePage,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      statePage = 4;
-                    });
-                  },
-                  child: nameBox(
-                    context,
-                    'CUSTOMERS',
-                    Icons.people,
-                    4,
-                    statePage,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      statePage = 5;
-                    });
-                  },
-                  child: nameBox(
-                    context,
-                    'INVENTORY',
-                    Icons.inventory,
-                    5,
-                    statePage,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
+        body: Row(
+          children: [
+            Container(
               height: height,
-              width: width * 5 / 6,
-              color: backgroundColor,
-              padding: const EdgeInsets.all(30),
-              child: page[statePage]),
-        ],
-      ),
-    );
+              width: width / 6,
+              color: primaryColor,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: height / 8 - 15,
+                    // child: const TimeContainer(),
+                    // child: Center(
+                    //   child: Text(
+                    //     'FITMONK Inc.',
+                    //     style: Theme.of(context).textTheme.titleLarge,
+                    //   ),
+                    // ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        statePage = 0;
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: nameBox(
+                      context,
+                      'HOME',
+                      Icons.home,
+                      0,
+                      statePage,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        statePage = 1;
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: nameBox(
+                      context,
+                      'SALES',
+                      Icons.shopping_cart,
+                      1,
+                      statePage,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        statePage = 2;
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: nameBox(
+                      context,
+                      'PURCHASE',
+                      Icons.money,
+                      2,
+                      statePage,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        statePage = 3;
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: nameBox(
+                      context,
+                      'PRODUCTS',
+                      Icons.production_quantity_limits,
+                      3,
+                      statePage,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        statePage = 4;
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: nameBox(
+                      context,
+                      'CUSTOMERS',
+                      Icons.people,
+                      4,
+                      statePage,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        statePage = 5;
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: nameBox(
+                      context,
+                      'INVENTORY',
+                      Icons.inventory,
+                      5,
+                      statePage,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+                height: height,
+                width: width * 5 / 6,
+                color: backgroundColor,
+                padding: const EdgeInsets.all(30),
+                child: page[statePage]),
+          ],
+        ),
+      );
+    
   }
 }
 
@@ -157,7 +190,7 @@ nameBox(BuildContext context, String name, iconName, int page, int statePage) {
   return Stack(
     children: [
       Container(
-        padding: const EdgeInsets.only(left: 30),
+        padding: const EdgeInsets.only(left: 40),
         height: 70,
         child: Row(
           children: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/models/client_model.dart';
 
 customerInfo(BuildContext context, width) {
   return Row(
@@ -20,7 +21,7 @@ customerInfo(BuildContext context, width) {
         width: width / 12,
         child: Center(
           child: Text(
-            'Customer No.',
+            'Customer Name',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -40,7 +41,7 @@ customerInfo(BuildContext context, width) {
         width: width / 12,
         child: Center(
           child: Text(
-            'Name',
+            'Manager Name',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -61,7 +62,7 @@ customerInfo(BuildContext context, width) {
         width: width / 12,
         child: Center(
           child: Text(
-            'Location',
+            'Company Type',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -73,7 +74,7 @@ customerInfo(BuildContext context, width) {
   );
 }
 
-customerData(BuildContext context, width) {
+customerData(BuildContext context, width,ClientModel client,int index) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -83,7 +84,7 @@ customerData(BuildContext context, width) {
         width: width / 24,
         child:  Center(
             child: Text(
-          '1',
+          "$index",
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -92,7 +93,7 @@ customerData(BuildContext context, width) {
         width: width / 12,
         child: Center(
             child: Text(
-          'K123t',
+          client.clientName,
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -101,7 +102,7 @@ customerData(BuildContext context, width) {
         width: width / 12,
         child:  Center(
             child: Text(
-          '987646754',
+          client.panNumber ?? '',
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -110,7 +111,7 @@ customerData(BuildContext context, width) {
         width: width / 12,
         child: Center(
             child: Text(
-          'Rupim Fancy',
+           client.managerName ?? '',
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -119,7 +120,7 @@ customerData(BuildContext context, width) {
         width: width / 12,
         child:  Center(
             child: Text(
-          '9846035882',
+          client.clientPhone ?? '',
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -129,7 +130,7 @@ customerData(BuildContext context, width) {
         width: width / 12,
         child:  Center(
             child: Text(
-          'Birauta-17,Kaski',
+           client.clientType,
          style: Theme.of(context).textTheme.displayLarge,
         )),
       ),

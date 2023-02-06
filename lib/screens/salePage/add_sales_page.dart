@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/getProducts.dart';
 
 class AddSalesPage extends StatefulWidget {
   const AddSalesPage({super.key});
@@ -718,7 +719,7 @@ class _AddSalesPageState extends State<AddSalesPage> {
             ),
 
             Container(
-              margin: const EdgeInsetsDirectional.symmetric(horizontal: 30),
+              margin: const EdgeInsets.symmetric(horizontal: 30),
               child: Table(
                   border: TableBorder.all(
                       color: primaryColor.withOpacity(0.5),
@@ -862,7 +863,7 @@ class _AddSalesPageState extends State<AddSalesPage> {
               height: 5,
             ),
             Container(
-              margin: const EdgeInsetsDirectional.symmetric(horizontal: 30),
+              margin: const EdgeInsets.symmetric(horizontal: 30),
               child: Table(
                   border: TableBorder.all(
                       color: primaryColor.withOpacity(0.5),
@@ -1033,7 +1034,8 @@ class _AddSalesPageState extends State<AddSalesPage> {
                 Container(
                   margin: const EdgeInsets.only(right: 20),
                   child: TextButton(
-                    onPressed: () {
+                    onPressed: ()  {
+                      
                       Navigator.pop(context);
                     },
                     child: Container(

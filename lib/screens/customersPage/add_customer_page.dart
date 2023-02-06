@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:inventorymanagementsystem/api/add_client.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/models/client_model.dart';
+import 'package:nepali_address/nepali_address.dart';
 
 class AddCustomerPage extends StatefulWidget {
   const AddCustomerPage({super.key});
@@ -9,9 +12,23 @@ class AddCustomerPage extends StatefulWidget {
 }
 
 class _AddCustomerPageState extends State<AddCustomerPage> {
+  List companyType = ["Manufacturer", "Shop", "Other"];
+  String? selectedCompanyType;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController panController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController managerNameController = TextEditingController();
+  TextEditingController telephoneController = TextEditingController();
+  TextEditingController managerPhoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController wardController = TextEditingController();
+  String? province;
+  String? district;
+  String? municipality;
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+
     return StatefulBuilder(
       builder: (context, setState) {
         return SimpleDialog(
@@ -73,6 +90,8 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                     height: 40,
                     width: 300,
                     child: TextField(
+                      textInputAction: TextInputAction.next,
+                      controller: nameController,
                       maxLines: 1,
                       style: const TextStyle(fontSize: 18),
                       textAlignVertical: TextAlignVertical.center,
@@ -94,10 +113,12 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                   const SizedBox(
                     width: 10,
                   ),
-                   SizedBox(
+                  SizedBox(
                     height: 40,
                     width: 300,
                     child: TextField(
+                      textInputAction: TextInputAction.next,
+                      controller: panController,
                       maxLines: 1,
                       style: const TextStyle(fontSize: 18),
                       textAlignVertical: TextAlignVertical.center,
@@ -130,6 +151,8 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                     height: 40,
                     width: 300,
                     child: TextField(
+                      textInputAction: TextInputAction.next,
+                      controller: managerNameController,
                       maxLines: 1,
                       style: const TextStyle(fontSize: 18),
                       textAlignVertical: TextAlignVertical.center,
@@ -142,7 +165,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
                           fillColor: backgroundColor,
-                          hintText: 'District',
+                          hintText: 'Manager Name',
                           hintStyle: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: primaryColor.withOpacity(0.5))),
@@ -151,10 +174,13 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                   const SizedBox(
                     width: 10,
                   ),
-                   SizedBox(
+                  SizedBox(
                     height: 40,
                     width: 300,
                     child: TextField(
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      controller: managerPhoneController,
                       maxLines: 1,
                       style: const TextStyle(fontSize: 18),
                       textAlignVertical: TextAlignVertical.center,
@@ -167,7 +193,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
                           fillColor: backgroundColor,
-                          hintText: 'Location',
+                          hintText: 'Manager Phone',
                           hintStyle: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: primaryColor.withOpacity(0.5))),
@@ -185,6 +211,9 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                     height: 40,
                     width: 300,
                     child: TextField(
+                      textInputAction: TextInputAction.next,
+                      controller: telephoneController,
+                      keyboardType: TextInputType.number,
                       maxLines: 1,
                       style: const TextStyle(fontSize: 18),
                       textAlignVertical: TextAlignVertical.center,
@@ -197,7 +226,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
                           fillColor: backgroundColor,
-                          hintText: 'Manage Name',
+                          hintText: 'Telephone',
                           hintStyle: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: primaryColor.withOpacity(0.5))),
@@ -206,65 +235,12 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                   const SizedBox(
                     width: 10,
                   ),
-                   SizedBox(
-                    height: 40,
-                    width: 300,
-                    child: TextField(
-                      maxLines: 1,
-                      style: const TextStyle(fontSize: 18),
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                          filled: true,
-                          contentPadding: const EdgeInsets.only(
-                              left: 20, top: 5, right: 15),
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          fillColor: backgroundColor,
-                          hintText: 'Telephone No.',
-                          hintStyle: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: primaryColor.withOpacity(0.5))),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.only(left: 30),
-              child: Row(
-                children: [
                   SizedBox(
                     height: 40,
                     width: 300,
                     child: TextField(
-                      maxLines: 1,
-                      style: const TextStyle(fontSize: 18),
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                          filled: true,
-                          contentPadding: const EdgeInsets.only(
-                              left: 20, top: 5, right: 15),
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          fillColor: backgroundColor,
-                          hintText: 'Phone Number',
-                          hintStyle: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: primaryColor.withOpacity(0.5))),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                   SizedBox(
-                    height: 40,
-                    width: 300,
-                    child: TextField(
+                      textInputAction: TextInputAction.next,
+                      controller: emailController,
                       maxLines: 1,
                       style: const TextStyle(fontSize: 18),
                       textAlignVertical: TextAlignVertical.center,
@@ -311,26 +287,78 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                         iconDisabledColor: primaryColor,
                         iconSize: 30,
                         hint: Text(
-                          'Company Type',
+                          selectedCompanyType ?? 'Company Type',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
-                        items: List<int>.generate(12, (int index) => index).map(
+                        items: List<int>.generate(
+                            companyType.length, (int index) => index).map(
                           (val) {
                             return DropdownMenuItem(
-                              value: val + 1,
-                              child: Text("${val + 1}"),
+                              value: val,
+                              child: Text(
+                                companyType[val],
+                              ),
                             );
                           },
                         ).toList(),
                         onChanged: (value) {
-                          setState(() {});
+                          setState(() {
+                            selectedCompanyType = companyType[value!];
+                          });
                         }),
                   ),
-                 
                 ],
               ),
             ),
-           
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(left: 10, right: 200),
+                    child: AddressContainer(
+                      isRoundedBorder: true,
+                      selectDistrict: (String district1) {
+                        district = district1;
+                      },
+                      selectProvince: (String province1) {
+                        province = province1;
+                      },
+                      selectMunicipality: (String municipality1) {
+                        municipality = municipality1;
+                      },
+                      wardController: wardController,
+                      isNepali: false,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: SizedBox(
+                height: 40,
+                width: 300,
+                child: TextField(
+                  textInputAction: TextInputAction.next,
+                  controller: addressController,
+                  maxLines: 1,
+                  style: const TextStyle(fontSize: 18),
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                      filled: true,
+                      contentPadding:
+                          const EdgeInsets.only(left: 20, top: 5, right: 15),
+                      border: const OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      fillColor: backgroundColor,
+                      hintText: 'Address',
+                      hintStyle: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: primaryColor.withOpacity(0.5))),
+                ),
+              ),
+            ),
             const SizedBox(
               height: 20,
             ),
@@ -340,9 +368,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                   width: 20,
                 ),
                 TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: () {},
                   child: Stack(
                     children: [
                       Container(
@@ -405,6 +431,21 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                   margin: const EdgeInsets.only(right: 20),
                   child: TextButton(
                     onPressed: () {
+                      ClientModel clientModel = ClientModel(
+                          clientName: nameController.text,
+                          clientType: selectedCompanyType ?? 'shop',
+                          clientPhone: telephoneController.text,
+                          district: district,
+                          address: addressController.text,
+                          province: province,
+                          municipality:municipality,
+                          managerName: managerNameController.text,
+                          managerPhone: managerPhoneController.text,
+                          panNumber:panController.text,
+                          wardNo: wardController.text,
+                          email:emailController.text
+                          );
+                      createClient(clientModel);
                       Navigator.pop(context);
                     },
                     child: Container(

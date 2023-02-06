@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
 import 'package:inventorymanagementsystem/screens/customersPage/add_customer_page.dart';
 
+import '../../bloc/client/client_bloc.dart';
 import 'customer_info.dart';
 
 class CustomerMainPage extends StatefulWidget {
@@ -16,6 +18,7 @@ class _CustomerMainPageState extends State<CustomerMainPage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    
     return Container(
       height: height,
       width: width * 5 / 6,
@@ -146,7 +149,7 @@ class _CustomerMainPageState extends State<CustomerMainPage> {
                       ),
                       Container(
                         height: 40,
-                        width: 160,
+                        width: 220,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         decoration: const BoxDecoration(
                           color: backgroundColor,
@@ -164,7 +167,7 @@ class _CustomerMainPageState extends State<CustomerMainPage> {
                             iconDisabledColor: primaryColor,
                             iconSize: 30,
                             hint: Text(
-                              'Location',
+                              'CompanyType',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             items: List<int>.generate(12, (int index) => index)
@@ -206,16 +209,40 @@ class _CustomerMainPageState extends State<CustomerMainPage> {
             height: 2,
             color: lightBackgroundColor,
           ),
-          Container(
-            height: 60,
+          SizedBox(
+            height: 650,
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 7),
-            child: customerData(context, width),
-          ),
-          Container(
-            width: double.infinity,
-            height: 2,
-            color: lightBackgroundColor,
+            child: BlocBuilder<ClientBloc, ClientState>(
+                builder: (context, state) {
+              if (state is ClientInitial) {
+                return ListView.builder(
+                    itemCount: state.clients.length,
+                    itemBuilder: (context, i) {
+                      int index = i + 1;
+                      return Column(
+                        children: [
+                          Container(
+                            height: 60,
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 35, vertical: 7),
+                            child: customerData(context, width,
+                                state.clients[index - 1], index),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            height: 2,
+                            color: lightBackgroundColor,
+                          ),
+                        ],
+                      );
+                    });
+              } else {
+                return const SizedBox(
+                  child: Text(',mdsdjnsd'),
+                );
+              }
+            }),
           ),
         ],
       ),

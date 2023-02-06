@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventorymanagementsystem/bloc/products_bloc/products_bloc.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
 import 'package:inventorymanagementsystem/screens/productPage/add_product_page.dart';
 import 'package:inventorymanagementsystem/screens/productPage/product_info.dart';
@@ -15,6 +17,7 @@ class _ProductMainScreenState extends State<ProductMainScreen> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
     return Container(
       height: height,
       width: width * 5 / 6,
@@ -38,9 +41,8 @@ class _ProductMainScreenState extends State<ProductMainScreen> {
                 TextButton(
                   onPressed: () {
                     showDialog(
-                      context: context, 
-                      builder: (_)=> const AddProductPage()
-                      );
+                        context: context,
+                        builder: (_) => const AddProductPage());
                   },
                   child: Container(
                     height: 50,
@@ -206,16 +208,40 @@ class _ProductMainScreenState extends State<ProductMainScreen> {
             height: 2,
             color: lightBackgroundColor,
           ),
-          Container(
-            height: 60,
+          SizedBox(
+            height: 650,
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 7),
-            child: productData(context, width),
-          ),
-          Container(
-            width: double.infinity,
-            height: 2,
-            color: lightBackgroundColor,
+            child: BlocBuilder<ProductsBloc, ProductsState>(
+                builder: (context, state) {
+              if (state is ProductsInitial) {
+                return ListView.builder(
+                    itemCount: state.products.length,
+                    itemBuilder: (context, i) {
+                      int index = i + 1;
+                      return Column(
+                        children: [
+                          Container(
+                            height: 60,
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 35, vertical: 7),
+                            child: productData(
+                                context, width, state.products[index - 1],index),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            height: 2,
+                            color: lightBackgroundColor,
+                          ),
+                        ],
+                      );
+                    });
+              } else {
+                return const SizedBox(
+                  child: Text('no products'),
+                );
+              }
+            }),
           ),
         ],
       ),

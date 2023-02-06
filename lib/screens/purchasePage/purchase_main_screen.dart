@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventorymanagementsystem/bloc/products_bloc/products_bloc.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
 import 'package:inventorymanagementsystem/screens/purchasePage/purchase_info.dart';
 
@@ -25,7 +27,6 @@ class _PurchaseMainPageState extends State<PurchaseMainPage> {
       ),
       child: Column(
         children: [
-         
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             height: height / 8 - 40,
@@ -76,157 +77,171 @@ class _PurchaseMainPageState extends State<PurchaseMainPage> {
           Container(
             height: 54,
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 7),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  height: 40,
-                  width: 280,
-                  child: TextField(
-                    maxLines: 1,
-                    style: const TextStyle(fontSize: 18),
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                        filled: true,
-                        contentPadding:
-                            const EdgeInsets.only(left: 20, top: 5, right: 15),
-                        suffixIcon: Icon(Icons.search,
-                            color: Theme.of(context).iconTheme.color),
-                        border: const OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(30))),
-                        fillColor: backgroundColor,
-                        hintText: 'Name',
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            color: primaryColor.withOpacity(0.5))),
-                  ),
-                ),
-                SizedBox(
-                  child: Row(
+            child: BlocBuilder<ProductsBloc, ProductsState>(
+              builder: (context, state) {
+                if (state is ProductsInitial) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
+                      SizedBox(
                         height: 40,
-                        width: 160,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: const BoxDecoration(
-                          color: backgroundColor,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          ),
+                        width: 280,
+                        child: TextField(
+                          maxLines: 1,
+                          style: const TextStyle(fontSize: 18),
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: InputDecoration(
+                              filled: true,
+                              contentPadding: const EdgeInsets.only(
+                                  left: 20, top: 5, right: 15),
+                              suffixIcon: Icon(Icons.search,
+                                  color: Theme.of(context).iconTheme.color),
+                              border: const OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30))),
+                              fillColor: backgroundColor,
+                              hintText: 'Name',
+                              hintStyle: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  color: primaryColor.withOpacity(0.5))),
                         ),
-                        child: DropdownButton(
-                            underline: Container(
-                              height: 1,
-                              color: Colors.transparent,
-                            ),
-                            isExpanded: true,
-                            iconEnabledColor: primaryColor,
-                            iconDisabledColor: primaryColor,
-                            iconSize: 30,
-                            hint: Text(
-                              'Method',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            items: List<int>.generate(12, (int index) => index)
-                                .map(
-                              (val) {
-                                return DropdownMenuItem(
-                                  value: val + 1,
-                                  child: Text("${val + 1}"),
-                                );
-                              },
-                            ).toList(),
-                            onChanged: (value) {
-                              setState(() {});
-                            }),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                        height: 40,
-                        width: 160,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: const BoxDecoration(
-                          color: backgroundColor,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          ),
+                      SizedBox(
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 160,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: const BoxDecoration(
+                                color: backgroundColor,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              child: DropdownButton(
+                                  underline: Container(
+                                    height: 1,
+                                    color: Colors.transparent,
+                                  ),
+                                  isExpanded: true,
+                                  iconEnabledColor: primaryColor,
+                                  iconDisabledColor: primaryColor,
+                                  iconSize: 30,
+                                  hint: Text(
+                                    'Method',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                  items: List<int>.generate(
+                                      12, (int index) => index).map(
+                                    (val) {
+                                      return DropdownMenuItem(
+                                        value: val + 1,
+                                        child: Text("${val + 1}"),
+                                      );
+                                    },
+                                  ).toList(),
+                                  onChanged: (value) {
+                                    setState(() {});
+                                  }),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              height: 40,
+                              width: 160,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: const BoxDecoration(
+                                color: backgroundColor,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              child: DropdownButton(
+                                  underline: Container(
+                                    height: 1,
+                                    color: Colors.transparent,
+                                  ),
+                                  isExpanded: true,
+                                  iconEnabledColor: primaryColor,
+                                  iconDisabledColor: primaryColor,
+                                  iconSize: 30,
+                                  hint: Text(
+                                    'Status',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                  items: List<int>.generate(
+                                      12, (int index) => index).map(
+                                    (val) {
+                                      return DropdownMenuItem(
+                                        value: val + 1,
+                                        child: Text("${val + 1}"),
+                                      );
+                                    },
+                                  ).toList(),
+                                  onChanged: (value) {
+                                    setState(() {});
+                                  }),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              height: 40,
+                              width: 160,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: const BoxDecoration(
+                                color: backgroundColor,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              child: DropdownButton(
+                                  underline: Container(
+                                    height: 1,
+                                    color: Colors.transparent,
+                                  ),
+                                  isExpanded: true,
+                                  iconEnabledColor: primaryColor,
+                                  iconDisabledColor: primaryColor,
+                                  iconSize: 30,
+                                  hint: Text(
+                                    'Date',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                  items: List<int>.generate(
+                                      12, (int index) => index).map(
+                                    (val) {
+                                      return DropdownMenuItem(
+                                        value: val + 1,
+                                        child: Text("${val + 1}"),
+                                      );
+                                    },
+                                  ).toList(),
+                                  onChanged: (value) {
+                                    setState(() {});
+                                  }),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ],
                         ),
-                        child: DropdownButton(
-                            underline: Container(
-                              height: 1,
-                              color: Colors.transparent,
-                            ),
-                            isExpanded: true,
-                            iconEnabledColor: primaryColor,
-                            iconDisabledColor: primaryColor,
-                            iconSize: 30,
-                            hint: Text(
-                              'Status',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            items: List<int>.generate(12, (int index) => index)
-                                .map(
-                              (val) {
-                                return DropdownMenuItem(
-                                  value: val + 1,
-                                  child: Text("${val + 1}"),
-                                );
-                              },
-                            ).toList(),
-                            onChanged: (value) {
-                              setState(() {});
-                            }),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                        height: 40,
-                        width: 160,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: const BoxDecoration(
-                          color: backgroundColor,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          ),
-                        ),
-                        child: DropdownButton(
-                            underline: Container(
-                              height: 1,
-                              color: Colors.transparent,
-                            ),
-                            isExpanded: true,
-                            iconEnabledColor: primaryColor,
-                            iconDisabledColor: primaryColor,
-                            iconSize: 30,
-                            hint: Text(
-                              'Date',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            items: List<int>.generate(12, (int index) => index)
-                                .map(
-                              (val) {
-                                return DropdownMenuItem(
-                                  value: val + 1,
-                                  child: Text("${val + 1}"),
-                                );
-                              },
-                            ).toList(),
-                            onChanged: (value) {
-                              setState(() {});
-                            }),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      )
                     ],
-                  ),
-                )
-              ],
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              },
             ),
           ),
           Container(

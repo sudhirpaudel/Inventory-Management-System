@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/models/product_model.dart';
 
 productInfo(BuildContext context, width) {
   return Row(
@@ -20,7 +21,7 @@ productInfo(BuildContext context, width) {
         width: width / 12,
         child: Center(
           child: Text(
-            'Product No.',
+            'Product Name',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -55,14 +56,12 @@ productInfo(BuildContext context, width) {
           ),
         ),
       ),
-     
-      
       SizedBox(
         height: 50,
         width: width / 8,
         child: Center(
           child: Text(
-            'Available Sizes',
+            'Product Type',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -74,7 +73,7 @@ productInfo(BuildContext context, width) {
   );
 }
 
-productData(BuildContext context, width) {
+productData(BuildContext context, width, ProductModel product,int index) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -82,9 +81,9 @@ productData(BuildContext context, width) {
       SizedBox(
         height: 50,
         width: width / 24,
-        child:  Center(
+        child: Center(
             child: Text(
-          '1',
+          "$index",
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -93,16 +92,7 @@ productData(BuildContext context, width) {
         width: width / 12,
         child: Center(
             child: Text(
-          'L1119b',
-          style: Theme.of(context).textTheme.displayLarge,
-        )),
-      ),
-      SizedBox(
-        height: 50,
-        width: width / 12,
-        child:  Center(
-            child: Text(
-          '1119',
+          product.productName,
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -111,35 +101,65 @@ productData(BuildContext context, width) {
         width: width / 12,
         child: Center(
             child: Text(
-          'Brown',
+          product.articleNumber ?? '',
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
       SizedBox(
         height: 50,
         width: width / 12,
-        child:  Center(
+        child: Center(
             child: Text(
-          'Female',
+          product.color ?? '',
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
-     
       SizedBox(
         height: 50,
-        width: width / 8,
-        child:  Center(
+        width: width / 12,
+        child: Center(
             child: Text(
-          '4   5   6   7  8',
-         style: Theme.of(context).textTheme.displayLarge,
+          product.productCategory ?? '',
+          style: Theme.of(context).textTheme.displayLarge,
+        )),
+      ),
+      // SizedBox(
+      //   height: 50,
+      //   width: width / 8,
+      //   child: Center(
+      //       child: Row(
+      //         mainAxisAlignment: MainAxisAlignment.center,
+      //         crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: List.generate(product[7].length, (index) {
+      //       if (product[7][index]) {
+      //         return Text(
+      //           '$index  ',
+      //           style: Theme.of(context).textTheme.displayLarge,
+      //         );
+      //       } else {
+      //         return const SizedBox();
+      //       }
+      //     }),
+      //   )),
+      // ),
+       SizedBox(
+        height: 50,
+        width: width / 12,
+        child: Center(
+            child: Text(
+          product.productType ?? '',
+          style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
       SizedBox(
         height: 50,
         width: width / 24,
-        child: const Center(
-            child: Icon(
-          Icons.arrow_drop_down,
+        child: Center(
+            child: IconButton(
+          onPressed: (){
+
+          },
+          icon:const Icon(Icons.arrow_drop_down),
           color: primaryColor,
         )),
       )
