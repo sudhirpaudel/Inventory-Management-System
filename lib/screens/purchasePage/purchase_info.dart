@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/models/transaction_model.dart';
+import 'package:inventorymanagementsystem/screens/transaction/view_transaction_page.dart';
 
 purchaseInfo(BuildContext context, width) {
   return Row(
@@ -45,7 +47,6 @@ purchaseInfo(BuildContext context, width) {
           ),
         ),
       ),
-      
       SizedBox(
         height: 50,
         width: width / 12,
@@ -71,7 +72,7 @@ purchaseInfo(BuildContext context, width) {
         width: width / 12,
         child: Center(
           child: Text(
-            'Payment Method',
+            'TotalProducts',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -81,12 +82,11 @@ purchaseInfo(BuildContext context, width) {
         width: width / 12,
         child: Center(
           child: Text(
-            'Payment Status',
+            'Total no.of products',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
       ),
-
       SizedBox(
         width: width / 24,
       )
@@ -94,7 +94,8 @@ purchaseInfo(BuildContext context, width) {
   );
 }
 
-purchaseData(BuildContext context, width) {
+purchaseData(
+    BuildContext context, width, OnlyTransactionModel transaction, int index) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -102,85 +103,141 @@ purchaseData(BuildContext context, width) {
       SizedBox(
         height: 50,
         width: width / 24,
-        child:  Center(
-            child: Text(
-          '1',
-          style: Theme.of(context).textTheme.displayLarge,
-        )),
+        child: Center(
+          child: Text(
+            index.toString(),
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
       ),
       SizedBox(
         height: 50,
         width: width / 12,
         child: Center(
-            child: Text(
-          'BB2022B1',
-          style: Theme.of(context).textTheme.displayLarge,
-        )),
-      ),
-      SizedBox(
-        height: 50,
-        width: width / 12,
-        child:  Center(
-            child: Text(
-          'BBest Polymers',
-          style: Theme.of(context).textTheme.displayLarge,
-        )),
+          child: Text(
+            transaction.id.toString(),
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
       ),
       SizedBox(
         height: 50,
         width: width / 12,
         child: Center(
-            child: Text(
-          '457677889',
-          style: Theme.of(context).textTheme.displayLarge,
-        )),
+          child: Text(
+            transaction.client.clientName.toString(),
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
       ),
       SizedBox(
         height: 50,
         width: width / 12,
-        child:  Center(
-            child: Text(
-          '2079/5/11',
-          style: Theme.of(context).textTheme.displayLarge,
-        )),
-      ),
-     
-      SizedBox(
-        height: 50,
-        width: width / 12,
-        child:  Center(
-            child: Text(
-          '2,33,222.34',
-         style: Theme.of(context).textTheme.displayLarge,
-        )),
+        child: Center(
+          child: Text(
+            transaction.client.panNumber.toString(),
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
       ),
       SizedBox(
         height: 50,
         width: width / 12,
-        child:  Center(
-            child: Text(
-          'Cash',
-         style: Theme.of(context).textTheme.displayLarge,
-        )),
+        child: Center(
+          child: Text(
+            "${DateTime.parse(transaction.transactionDate).year.toString()}/${DateTime.parse(transaction.transactionDate).month.toString()}/${DateTime.parse(transaction.transactionDate).day.toString()}",
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
       ),
       SizedBox(
         height: 50,
         width: width / 12,
-        child:  Center(
-            child: Text(
-          'Completed',
-         style: Theme.of(context).textTheme.displayLarge,
-        )),
+        child: Center(
+          child: Text(
+            transaction.totalAmount.toString(),
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
       ),
       SizedBox(
         height: 50,
-        width: width / 24,
-        child: const Center(
-            child: Icon(
-          Icons.arrow_drop_down,
-          color: primaryColor,
-        )),
-      )
+        width: width / 12,
+        child: Center(
+          child: Text(
+            transaction.numberOfProducts.toString(),
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
+      ),
+      SizedBox(
+        height: 50,
+        width: width / 12,
+        child: Center(
+          child: Text(
+            transaction.totalNumberOfProducts.toString(),
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
+      ),
+      Row(
+         children: [
+           SizedBox(
+            
+            height: 50,
+            child: Center(
+              child: IconButton(
+                onPressed: () {
+                   showDialog(
+                            context: context,
+                            builder: (_) => const ViewTransactionPage(
+                                ),);
+                },
+                icon: const Icon(
+                  Icons.pageview,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+      ),
+       SizedBox(
+            
+            height: 50,
+            child: Center(
+              child: IconButton(
+                onPressed: () {
+                   showDialog(
+                            context: context,
+                            builder: (_) => const ViewTransactionPage(
+                                ),);
+                },
+                icon: const Icon(
+                  Icons.edit_note_outlined,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+      ),
+       SizedBox(
+            
+            height: 50,
+            child: Center(
+              child: IconButton(
+                onPressed: () {
+                   showDialog(
+                            context: context,
+                            builder: (_) => const ViewTransactionPage(
+                                ),);
+                },
+                icon: const Icon(
+                  Icons.delete,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+      ),
+         ],
+       ),
     ],
   );
 }

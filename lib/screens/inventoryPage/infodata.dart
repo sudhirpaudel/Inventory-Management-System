@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/models/inventory_model.dart';
 
 inventoryInfo(BuildContext context, width) {
   return Row(
@@ -92,7 +93,7 @@ inventoryInfo(BuildContext context, width) {
   );
 }
 
-inventoryData(BuildContext context, width) {
+inventoryData(BuildContext context,width,InventoryModel inventory, index) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -102,7 +103,7 @@ inventoryData(BuildContext context, width) {
         width: width / 24,
         child:  Center(
             child: Text(
-          '1',
+          index.toString(),
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -111,7 +112,7 @@ inventoryData(BuildContext context, width) {
         width: width / 12,
         child: Center(
             child: Text(
-          'L1119b',
+          inventory.product.toString(),
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -120,7 +121,7 @@ inventoryData(BuildContext context, width) {
         width: width / 12,
         child:  Center(
             child: Text(
-          '1119',
+         inventory.product.toString(),
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -156,7 +157,7 @@ inventoryData(BuildContext context, width) {
         width: width / 12,
         child:  Center(
             child: Text(
-          '32',
+          inventory.numberOfProducts.toString(),
           style: Theme.of(context).textTheme.displayLarge,
         )),
       ),
@@ -176,7 +177,7 @@ inventoryData(BuildContext context, width) {
             child: Icon(
           Icons.arrow_drop_down,
           color: primaryColor,
-        )),
+        ),),
       )
     ],
   );

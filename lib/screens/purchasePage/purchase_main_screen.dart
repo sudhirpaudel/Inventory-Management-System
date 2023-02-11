@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventorymanagementsystem/bloc/products_bloc/products_bloc.dart';
+import 'package:inventorymanagementsystem/bloc/transaction_bloc/transaction_bloc.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/models/transaction_model.dart';
 import 'package:inventorymanagementsystem/screens/purchasePage/purchase_info.dart';
 
-import 'add_purchase_page.dart';
+import '../transaction/add_transaction_page.dart';
 
 class PurchaseMainPage extends StatefulWidget {
   const PurchaseMainPage({super.key});
@@ -42,7 +44,9 @@ class _PurchaseMainPageState extends State<PurchaseMainPage> {
                   onPressed: () {
                     showDialog(
                         context: context,
-                        builder: (_) => const AddPurchasePage());
+                        builder: (_) => const AddTransactionPage(
+                              whatType: 'PURCHASE',
+                            ));
                   },
                   child: Container(
                     height: 50,
@@ -261,16 +265,44 @@ class _PurchaseMainPageState extends State<PurchaseMainPage> {
             height: 2,
             color: lightBackgroundColor,
           ),
-          Container(
-            height: 60,
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 7),
-            child: purchaseData(context, width),
-          ),
-          Container(
-            width: double.infinity,
-            height: 2,
-            color: lightBackgroundColor,
+          SizedBox(
+            height: 650,
+            child: BlocBuilder<TransactionBloc, TransactionState>(
+              builder: (context, state) {
+               
+                if (state is TransactionInitial) {
+                  List<OnlyTransactionModel> purchaseTransactions = state.transactions
+    .where((transaction) => transaction.transactionType.toUpperCase() == "PURCHASE")
+    .toList();
+                  return ListView.builder(
+                      itemCount: purchaseTransactions.length,
+                      itemBuilder: (context, i) {
+                       
+                          int  index = i+ 1;
+                          return Column(
+                            children: [
+                              Container(
+                                height: 60,
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 35, vertical: 7),
+                                child: purchaseData(context, width,
+                                    purchaseTransactions[i], index),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                height: 2,
+                                color: lightBackgroundColor,
+                              ),
+                            ],
+                          );
+                       
+                      });
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
           ),
         ],
       ),

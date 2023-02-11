@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventorymanagementsystem/bloc/inventory_bloc/inventory_bloc.dart';
+import 'package:inventorymanagementsystem/bloc/transaction_bloc/transaction_bloc.dart';
 import 'package:inventorymanagementsystem/screens/mainscreen.dart';
 import 'package:inventorymanagementsystem/theme/material_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'bloc/client/client_bloc.dart';
+import 'bloc/client_bloc/client_bloc.dart';
 import 'bloc/products_bloc/products_bloc.dart';
 
 void main() {
@@ -39,6 +41,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => ClientBloc()..add(GetClients()),
+        ),
+         BlocProvider(
+          create: (context) => TransactionBloc()..add(GetTransactions()),
+        ),
+          BlocProvider(
+          create: (context) => InventoryBloc()..add(GetInventory()),
         ),
       ],
       child: MaterialApp(

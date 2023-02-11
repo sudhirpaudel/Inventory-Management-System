@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventorymanagementsystem/bloc/inventory_bloc/inventory_bloc.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
 import 'package:inventorymanagementsystem/screens/inventoryPage/infodata.dart';
 
@@ -234,17 +236,44 @@ class _InventoryMainPageState extends State<InventoryMainPage> {
             height: 2,
             color: lightBackgroundColor,
           ),
-          Container(
-            height: 60,
+
+
+           SizedBox(
+            height: 650,
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 7),
-            child: inventoryData(context, width),
+            child: BlocBuilder<InventoryBloc, InventoryState>(
+                builder: (context, state) {
+              if (state is InventoryInitial) {
+                return ListView.builder(
+                    itemCount: state.inventory.length,
+                    itemBuilder: (context, i) {
+                      int index = i + 1;
+                      return Column(
+                        children: [
+                          Container(
+                            height: 60,
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 35, vertical: 7),
+                            child: inventoryData(
+                                context, width, state.inventory[index - 1],index),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            height: 2,
+                            color: lightBackgroundColor,
+                          ),
+                        ],
+                      );
+                    });
+              } else {
+                return const SizedBox(
+                  child: Text('no products'),
+                );
+              }
+            }),
           ),
-          Container(
-            width: double.infinity,
-            height: 2,
-            color: lightBackgroundColor,
-          ),
+         
         ],
       ),
     );

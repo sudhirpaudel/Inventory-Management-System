@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventorymanagementsystem/bloc/transaction_bloc/transaction_bloc.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
+import 'package:inventorymanagementsystem/models/transaction_model.dart';
+import 'package:inventorymanagementsystem/screens/transaction/add_transaction_page.dart';
 import 'package:inventorymanagementsystem/screens/salePage/sales_info.dart';
-
-import 'add_sales_page.dart';
 
 class SalesMainPage extends StatefulWidget {
   const SalesMainPage({super.key});
@@ -39,7 +41,10 @@ class _SalesMainPageState extends State<SalesMainPage> {
                 TextButton(
                   onPressed: () {
                     showDialog(
-                        context: context, builder: (_) => const AddSalesPage());
+                        context: context,
+                        builder: (_) => const AddTransactionPage(
+                              whatType: 'SALES',
+                            ));
                   },
                   child: Container(
                     height: 50,
@@ -283,16 +288,43 @@ class _SalesMainPageState extends State<SalesMainPage> {
             height: 2,
             color: lightBackgroundColor,
           ),
-          Container(
-            height: 60,
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 7),
-            child: salesData(context, width),
-          ),
-          Container(
-            width: double.infinity,
-            height: 2,
-            color: lightBackgroundColor,
+          SizedBox(
+            height: 650,
+            child: BlocBuilder<TransactionBloc, TransactionState>(
+              builder: (context, state) {
+                if (state is TransactionInitial) {
+                  List<OnlyTransactionModel> salesTransactions = state
+                      .transactions
+                      .where((transaction) =>
+                          transaction.transactionType.toUpperCase() == "SALES")
+                      .toList();
+                  return ListView.builder(
+                      itemCount: salesTransactions.length,
+                      itemBuilder: (context, i) {
+                        int index = i + 1;
+                        return Column(
+                          children: [
+                            Container(
+                              height: 60,
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 35, vertical: 7),
+                              child: salesData(
+                                  context, width, salesTransactions[i], index),
+                            ),
+                            Container(
+                              width: double.infinity,
+                              height: 2,
+                              color: lightBackgroundColor,
+                            ),
+                          ],
+                        );
+                      });
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
           ),
         ],
       ),

@@ -8,7 +8,7 @@ import 'package:inventorymanagementsystem/screens/purchasePage/purchase_main_scr
 import 'package:inventorymanagementsystem/screens/salePage/sales_main_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/client/client_bloc.dart';
+import '../bloc/client_bloc/client_bloc.dart';
 import '../config/colors.dart';
 
 class MainScreen extends StatefulWidget {

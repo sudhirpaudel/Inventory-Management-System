@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
 import 'package:inventorymanagementsystem/screens/customersPage/add_customer_page.dart';
 
-import '../../bloc/client/client_bloc.dart';
+import '../../bloc/client_bloc/client_bloc.dart';
 import 'customer_info.dart';
 
 class CustomerMainPage extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventorymanagementsystem/api/add_product.dart';
-import 'package:inventorymanagementsystem/bloc/client/client_bloc.dart';
+import 'package:inventorymanagementsystem/bloc/client_bloc/client_bloc.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
 import 'package:inventorymanagementsystem/models/product_model.dart';
 

@@ -1,22 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventorymanagementsystem/api/add_transaction.dart';
+import 'package:inventorymanagementsystem/bloc/client_bloc/client_bloc.dart';
+import 'package:inventorymanagementsystem/bloc/products_bloc/products_bloc.dart';
 import 'package:inventorymanagementsystem/config/colors.dart';
-import 'package:inventorymanagementsystem/getProducts.dart';
+// ignore: depend_on_referenced_packages
+import 'package:collection/collection.dart';
+import 'package:inventorymanagementsystem/models/transaction_model.dart';
 
-class AddSalesPage extends StatefulWidget {
-  const AddSalesPage({super.key});
-
+class AddTransactionPage extends StatefulWidget {
+  const AddTransactionPage({super.key, required this.whatType});
+  final String whatType;
   @override
-  State<AddSalesPage> createState() => _AddSalesPageState();
+  State<AddTransactionPage> createState() => _AddTransactionPageState();
 }
 
-class _AddSalesPageState extends State<AddSalesPage> {
+class _AddTransactionPageState extends State<AddTransactionPage> {
   bool isCompanyVerified = true;
   bool isProductVerified = false;
   bool isVATneeded = false;
   bool withVAT = true;
+  bool isSizeNeeded = false;
+  String? noOfProducts;
+  String? selectedClient;
+  String? selectedProduct;
+
+  List<TextEditingController> nameControllers =
+      List.generate(12, (l) => TextEditingController());
+  List<TextEditingController> quantityControllers =
+      List.generate(12, (j) => TextEditingController(text: '0'));
+  List<TextEditingController> amountControllers =
+      List.generate(12, (k) => TextEditingController(text: '0.0'));
+
+  List<List<TextEditingController>> sizeControllers = List.generate(
+      12, (k) => List.generate(14, (k) => TextEditingController(text: '0')));
+  List<String> productsId = List.generate(12, (i) => 'ProductName');
+  List<double> totalEach = List.generate(12, (i) => 0.0);
+  List<int> totalEachSize = List.generate(12, (i) => 0);
+  double totalMain = 0.0;
+  double totalTaxable = 0.0;
+  double vatAmountTotal = 0.0;
+  double grandTotal = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    widget.whatType;
     return StatefulBuilder(
       builder: (context, setState) {
         return SimpleDialog(
@@ -27,11 +62,12 @@ class _AddSalesPageState extends State<AddSalesPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               height: height / 8 - 40,
+              width: isSizeNeeded ? width * 0.6 : width * 0.3,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'ADD SALES',
+                    'ADD ${widget.whatType}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   TextButton(
@@ -122,43 +158,61 @@ class _AddSalesPageState extends State<AddSalesPage> {
                       : SizedBox(
                           child: Row(
                             children: [
-                              Container(
-                                height: 40,
-                                width: 300,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                decoration: const BoxDecoration(
-                                  color: backgroundColor,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                ),
-                                child: DropdownButton(
-                                    underline: Container(
-                                      height: 1,
-                                      color: Colors.transparent,
-                                    ),
-                                    isExpanded: true,
-                                    iconEnabledColor: primaryColor,
-                                    iconDisabledColor: primaryColor,
-                                    iconSize: 30,
-                                    hint: Text(
-                                      'Name',
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                    items: List<int>.generate(
-                                        12, (int index) => index).map(
-                                      (val) {
-                                        return DropdownMenuItem(
-                                          value: val + 1,
-                                          child: Text("${val + 1}"),
-                                        );
-                                      },
-                                    ).toList(),
-                                    onChanged: (value) {
-                                      setState(() {});
-                                    }),
+                              BlocBuilder<ClientBloc, ClientState>(
+                                builder: (context, state) {
+                                  if (state is ClientInitial) {
+                                    return Container(
+                                      height: 40,
+                                      width: 300,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      decoration: const BoxDecoration(
+                                        color: backgroundColor,
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: DropdownButton(
+                                        underline: Container(
+                                          height: 1,
+                                          color: Colors.transparent,
+                                        ),
+                                        isExpanded: true,
+                                        iconEnabledColor: primaryColor,
+                                        iconDisabledColor: primaryColor,
+                                        iconSize: 30,
+                                        hint: Text(
+                                          selectedClient ?? 'Name',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                        ),
+                                        items: List<int>.generate(
+                                            state.clients.length,
+                                            (int index) => index).map(
+                                          (val) {
+                                            return DropdownMenuItem(
+                                              value: val,
+                                              child: Text(
+                                                state.clients[val].clientName,
+                                              ),
+                                            );
+                                          },
+                                        ).toList(),
+                                        onChanged: (value) {
+                                          setState(
+                                            () {
+                                              selectedClient = state
+                                                  .clients[value!].clientName;
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  } else {
+                                    return const SizedBox();
+                                  }
+                                },
                               ),
                             ],
                           ),
@@ -189,21 +243,9 @@ class _AddSalesPageState extends State<AddSalesPage> {
                                     color: primaryColor.withOpacity(0.5))),
                           ),
                         )
-                      : Container(
+                      : const SizedBox(
                           height: 40,
                           width: 300,
-                          padding: const EdgeInsets.only(left: 20, top: 8),
-                          decoration: const BoxDecoration(
-                              color: backgroundColor,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          child: Text(
-                            'PAN number',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: primaryColor.withOpacity(0.5),
-                            ),
-                          ),
                         )
                 ],
               ),
@@ -211,63 +253,6 @@ class _AddSalesPageState extends State<AddSalesPage> {
             !isCompanyVerified
                 ? Column(
                     children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(left: 30),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              height: 40,
-                              width: 300,
-                              child: TextField(
-                                maxLines: 1,
-                                style: const TextStyle(fontSize: 18),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                    filled: true,
-                                    contentPadding: const EdgeInsets.only(
-                                        left: 20, top: 5, right: 15),
-                                    border: const OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    fillColor: backgroundColor,
-                                    hintText: 'Name',
-                                    hintStyle: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        color: primaryColor.withOpacity(0.5))),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            SizedBox(
-                              height: 40,
-                              width: 300,
-                              child: TextField(
-                                maxLines: 1,
-                                style: const TextStyle(fontSize: 18),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                    filled: true,
-                                    contentPadding: const EdgeInsets.only(
-                                        left: 20, top: 5, right: 15),
-                                    border: const OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    fillColor: backgroundColor,
-                                    hintText: 'PAN number',
-                                    hintStyle: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        color: primaryColor.withOpacity(0.5))),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       const SizedBox(
                         height: 20,
                       ),
@@ -626,7 +611,7 @@ class _AddSalesPageState extends State<AddSalesPage> {
                         iconDisabledColor: primaryColor,
                         iconSize: 30,
                         hint: Text(
-                          'No. of Products',
+                          noOfProducts ?? 'No. of Products',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         items: List<int>.generate(12, (int index) => index).map(
@@ -638,7 +623,9 @@ class _AddSalesPageState extends State<AddSalesPage> {
                           },
                         ).toList(),
                         onChanged: (value) {
-                          setState(() {});
+                          setState(() {
+                            noOfProducts = value.toString();
+                          });
                         }),
                   ),
                 ),
@@ -664,6 +651,15 @@ class _AddSalesPageState extends State<AddSalesPage> {
                         onChanged: (_) {
                           setState(() {
                             isVATneeded = !isVATneeded;
+                            totalMain = totalEach.sum;
+                            totalTaxable = totalMain;
+                            vatAmountTotal = double.parse(
+                                (totalMain * 0.13).toStringAsFixed(2));
+                            grandTotal = isVATneeded
+                                ? withVAT
+                                    ? totalMain
+                                    : totalTaxable + vatAmountTotal
+                                : totalMain;
                           });
                         },
                       ),
@@ -684,6 +680,15 @@ class _AddSalesPageState extends State<AddSalesPage> {
                               onChanged: (_) {
                                 setState(() {
                                   withVAT = !withVAT;
+                                  totalMain = totalEach.sum;
+                                  totalTaxable = totalMain;
+                                  vatAmountTotal = double.parse(
+                                      (totalMain * 0.13).toStringAsFixed(2));
+                                  grandTotal = isVATneeded
+                                      ? withVAT
+                                          ? totalMain
+                                          : totalTaxable + vatAmountTotal
+                                      : totalMain;
                                 });
                               },
                             ),
@@ -705,6 +710,16 @@ class _AddSalesPageState extends State<AddSalesPage> {
                               onChanged: (_) {
                                 setState(() {
                                   withVAT = !withVAT;
+
+                                  totalMain = totalEach.sum;
+                                  totalTaxable = totalMain;
+                                  vatAmountTotal = double.parse(
+                                      (totalMain * 0.13).toStringAsFixed(2));
+                                  grandTotal = isVATneeded
+                                      ? withVAT
+                                          ? totalMain
+                                          : totalTaxable + vatAmountTotal
+                                      : totalMain;
                                 });
                               },
                             ),
@@ -721,156 +736,240 @@ class _AddSalesPageState extends State<AddSalesPage> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 30),
               child: Table(
-                  border: TableBorder.all(
-                      color: primaryColor.withOpacity(0.5),
-                      width:
-                          1), // Allows to add a border decoration around your table
-                  children: [
-                    TableRow(children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
-                        child: Text(
-                          isProductVerified ? 'ProductId' : 'ProductName',
-                          style: Theme.of(context).textTheme.displayLarge,
-                        ),
+                columnWidths: const {
+                  0: FlexColumnWidth(3),
+                  1: FlexColumnWidth(2),
+                  2: FlexColumnWidth(3),
+                  3: FlexColumnWidth(3),
+                },
+                border: TableBorder.all(
+                    color: primaryColor.withOpacity(0.5),
+                    width:
+                        1), // Allows to add a border decoration around your table
+                children: [
+                  TableRow(children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 5),
+                      child: Text(
+                        isProductVerified ? 'ProductId' : 'ProductName',
+                        style: Theme.of(context).textTheme.displayLarge,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
-                        child: Text(
-                          'Quantity',
-                          style: Theme.of(context).textTheme.displayLarge,
-                        ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 5),
+                      child: Text(
+                        'Quantity',
+                        style: Theme.of(context).textTheme.displayLarge,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
-                        child: Text(
-                          'Amount',
-                          style: Theme.of(context).textTheme.displayLarge,
-                        ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 5),
+                      child: Text(
+                        'Amount',
+                        style: Theme.of(context).textTheme.displayLarge,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
-                        child: Text(
-                          'Total',
-                          style: Theme.of(context).textTheme.displayLarge,
-                        ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 5),
+                      child: Text(
+                        'Total',
+                        style: Theme.of(context).textTheme.displayLarge,
                       ),
-                    ]),
-                    TableRow(children: [
-                      isProductVerified
-                          ? SizedBox(
-                              height: 30,
-                              child: DropdownButton(
-                                  underline: Container(
-                                    height: 1,
-                                    color: Colors.transparent,
-                                  ),
-                                  isExpanded: true,
-                                  iconEnabledColor: primaryColor,
-                                  iconDisabledColor: primaryColor,
-                                  iconSize: 30,
-                                  hint: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    child: Text(
-                                      'Product Id',
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                  ),
-                                  items: List<int>.generate(
-                                      12, (int index) => index).map(
-                                    (val) {
-                                      return DropdownMenuItem(
-                                        value: val + 1,
-                                        child: Text("${val + 1}"),
-                                      );
-                                    },
-                                  ).toList(),
-                                  onChanged: (value) {
+                    ),
+                  ]),
+                  for (var i = 0; i < int.parse(noOfProducts ?? '1'); i++)
+                    TableRow(
+                      children: [
+                        isProductVerified
+                            ? BlocBuilder<ProductsBloc, ProductsState>(
+                                builder: (context, state) {
+                                  if (state is ProductsInitial) {
+                                    return Container(
+                                        height: 40,
+                                        width: 300,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        decoration: const BoxDecoration(
+                                          color: backgroundColor,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: DropdownButton(
+                                            underline: Container(
+                                              height: 1,
+                                              color: Colors.transparent,
+                                            ),
+                                            isExpanded: true,
+                                            iconEnabledColor: primaryColor,
+                                            iconDisabledColor: primaryColor,
+                                            iconSize: 30,
+                                            hint: Text(
+                                              productsId[i],
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge,
+                                            ),
+                                            items: List<int>.generate(
+                                                state.products.length,
+                                                (int index) => index).map(
+                                              (val) {
+                                                return DropdownMenuItem(
+                                                  value: val,
+                                                  child: Text(
+                                                    state.products[val]
+                                                        .productName,
+                                                  ),
+                                                );
+                                              },
+                                            ).toList(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                productsId[i] = state
+                                                    .products[value!]
+                                                    .productName;
+                                              });
+                                            }));
+                                  } else {
+                                    return const SizedBox();
+                                  }
+                                },
+                              )
+                            : SizedBox(
+                                height: 30,
+                                child: TextField(
+                                  maxLines: 1,
+                                  controller: nameControllers[i],
+                                  onChanged: (text) {
                                     setState(() {});
-                                  }),
-                            )
-                          : SizedBox(
-                              height: 30,
-                              child: TextField(
-                                maxLines: 1,
-                                style: const TextStyle(fontSize: 18),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                    filled: false,
-                                    contentPadding: const EdgeInsets.only(
-                                        left: 20, top: 5, right: 15),
-                                    border: const OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(0))),
-                                    hintText: 'Name',
-                                    hintStyle: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        color: primaryColor.withOpacity(0.5))),
+                                  },
+                                  style: const TextStyle(fontSize: 18),
+                                  textAlignVertical: TextAlignVertical.center,
+                                  decoration: InputDecoration(
+                                      filled: false,
+                                      contentPadding: const EdgeInsets.only(
+                                          left: 20, top: 5, right: 15),
+                                      border: const OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(0))),
+                                      hintText: 'Name',
+                                      hintStyle: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          color:
+                                              primaryColor.withOpacity(0.5))),
+                                ),
                               ),
+                        SizedBox(
+                          height: 30,
+                          child: TextField(
+                            maxLines: 1,
+                            keyboardType: TextInputType.number,
+                            controller: quantityControllers[i],
+                            onChanged: (text) {
+                              setState(() {
+                                totalEach[i] = double.parse((int.parse(
+                                            quantityControllers[i].text) *
+                                        double.parse(amountControllers[i].text))
+                                    .toStringAsFixed(2));
+                                totalMain = totalEach.sum;
+                                totalTaxable = totalMain;
+                                vatAmountTotal = double.parse(
+                                    (totalMain * 0.13).toStringAsFixed(2));
+                                grandTotal = isVATneeded
+                                    ? withVAT
+                                        ? totalMain
+                                        : totalTaxable + vatAmountTotal
+                                    : totalMain;
+                              });
+                            },
+                            style: const TextStyle(fontSize: 18),
+                            textAlignVertical: TextAlignVertical.center,
+                            decoration: const InputDecoration(
+                              filled: false,
+                              contentPadding:
+                                  EdgeInsets.only(left: 20, top: 5, right: 15),
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(0))),
                             ),
-                      const SizedBox(
-                        height: 30,
-                        child: TextField(
-                          maxLines: 1,
-                          style: TextStyle(fontSize: 18),
-                          textAlignVertical: TextAlignVertical.center,
-                          decoration: InputDecoration(
-                            filled: false,
-                            contentPadding:
-                                EdgeInsets.only(left: 20, top: 5, right: 15),
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(0))),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                        child: TextField(
-                          maxLines: 1,
-                          style: TextStyle(fontSize: 18),
-                          textAlignVertical: TextAlignVertical.center,
-                          decoration: InputDecoration(
-                            filled: false,
-                            contentPadding:
-                                EdgeInsets.only(left: 20, top: 5, right: 15),
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(0))),
+                        SizedBox(
+                          height: 30,
+                          child: TextField(
+                            maxLines: 1,
+                            keyboardType: TextInputType.number,
+                            controller: amountControllers[i],
+                            onChanged: (text) {
+                              setState(() {
+                                totalEach[i] = double.parse((int.parse(
+                                            quantityControllers[i].text) *
+                                        double.parse(amountControllers[i].text))
+                                    .toStringAsFixed(2));
+                                totalMain = totalEach.sum;
+                                totalTaxable = totalMain;
+                                vatAmountTotal = double.parse(
+                                    (totalMain * 0.13).toStringAsFixed(2));
+                                grandTotal = isVATneeded
+                                    ? withVAT
+                                        ? totalMain
+                                        : totalTaxable + vatAmountTotal
+                                    : totalMain;
+                              });
+                            },
+                            style: const TextStyle(fontSize: 18),
+                            textAlignVertical: TextAlignVertical.center,
+                            decoration: const InputDecoration(
+                              filled: false,
+                              contentPadding:
+                                  EdgeInsets.only(left: 20, top: 5, right: 15),
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(0))),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
+                        SizedBox(
                           height: 30,
                           child: Center(
-                              child: Text(
-                            '0.0',
-                            style: Theme.of(context).textTheme.displayLarge,
-                          ))),
-                    ]),
-                  ]),
+                            child: Text(
+                              totalEach[i].toString(),
+                              style: Theme.of(context).textTheme.displayLarge,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
+
             const SizedBox(
               height: 5,
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 30),
               child: Table(
-                  border: TableBorder.all(
-                      color: primaryColor.withOpacity(0.5),
-                      width:
-                          1), // Allows to add a border decoration around your table
-                  children: [
-                    TableRow(children: [
+                columnWidths: const {
+                  0: FlexColumnWidth(3),
+                  1: FlexColumnWidth(2),
+                  2: FlexColumnWidth(3),
+                  3: FlexColumnWidth(3),
+                },
+                border: TableBorder.all(
+                    color: primaryColor.withOpacity(0.5),
+                    width:
+                        1), // Allows to add a border decoration around your table
+                children: [
+                  TableRow(
+                    children: [
                       const Text(''),
                       const Text(''),
                       Padding(
@@ -882,14 +981,18 @@ class _AddSalesPageState extends State<AddSalesPage> {
                         ),
                       ),
                       SizedBox(
-                          height: 30,
-                          child: Center(
-                              child: Text(
-                            '0.0',
+                        height: 30,
+                        child: Center(
+                          child: Text(
+                            totalMain.toString(),
                             style: Theme.of(context).textTheme.displayLarge,
-                          ))),
-                    ]),
-                    TableRow(children: [
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
                       const Text(''),
                       const Text(''),
                       Padding(
@@ -917,9 +1020,11 @@ class _AddSalesPageState extends State<AddSalesPage> {
                           ),
                         ),
                       ),
-                    ]),
-                    if (!withVAT)
-                      TableRow(children: [
+                    ],
+                  ),
+                  if (!withVAT && isVATneeded)
+                    TableRow(
+                      children: [
                         const Text(''),
                         const Text(''),
                         Padding(
@@ -931,15 +1036,19 @@ class _AddSalesPageState extends State<AddSalesPage> {
                           ),
                         ),
                         SizedBox(
-                            height: 30,
-                            child: Center(
-                                child: Text(
-                              '0.0',
+                          height: 30,
+                          child: Center(
+                            child: Text(
+                              totalTaxable.toString(),
                               style: Theme.of(context).textTheme.displayLarge,
-                            ))),
-                      ]),
-                    if (!withVAT)
-                      TableRow(children: [
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (!withVAT && isVATneeded)
+                    TableRow(
+                      children: [
                         const Text(''),
                         const Text(''),
                         Padding(
@@ -951,14 +1060,18 @@ class _AddSalesPageState extends State<AddSalesPage> {
                           ),
                         ),
                         SizedBox(
-                            height: 30,
-                            child: Center(
-                                child: Text(
-                              '0.0',
+                          height: 30,
+                          child: Center(
+                            child: Text(
+                              vatAmountTotal.toString(),
                               style: Theme.of(context).textTheme.displayLarge,
-                            ))),
-                      ]),
-                    TableRow(children: [
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  TableRow(
+                    children: [
                       const Text(''),
                       const Text(''),
                       Padding(
@@ -970,15 +1083,157 @@ class _AddSalesPageState extends State<AddSalesPage> {
                         ),
                       ),
                       SizedBox(
-                          height: 30,
-                          child: Center(
-                              child: Text(
-                            '0.0',
+                        height: 30,
+                        child: Center(
+                          child: Text(
+                            grandTotal.toString(),
                             style: Theme.of(context).textTheme.displayLarge,
-                          ))),
-                    ]),
-                  ]),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
+
+            Container(
+              padding: const EdgeInsets.only(left: 30),
+              child: Row(
+                children: [
+                  Text(
+                    "Size Data Needed : ",
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                  Checkbox(
+                    value: isSizeNeeded,
+                    onChanged: (_) {
+                      setState(() {
+                        isSizeNeeded = !isSizeNeeded;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            isSizeNeeded
+                ? Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 30),
+                    child: Table(
+                      columnWidths: const {
+                        0: FlexColumnWidth(4),
+                        15: FlexColumnWidth(2),
+                      },
+                      border: TableBorder.all(
+                          color: primaryColor.withOpacity(0.5),
+                          width:
+                              1), // Allows to add a border decoration around your table
+                      children: [
+                        TableRow(children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 5),
+                            child: Text(
+                              isProductVerified ? 'ProductId' : 'ProductName',
+                              style: Theme.of(context).textTheme.displayLarge,
+                            ),
+                          ),
+                          for (var j = 0; j < 14; j++)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 5),
+                              child: Text(
+                                (j + 1).toString(),
+                                style: Theme.of(context).textTheme.displayLarge,
+                              ),
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 5),
+                            child: Text(
+                              'Total',
+                              style: Theme.of(context).textTheme.displayLarge,
+                            ),
+                          ),
+                        ]),
+                        for (var i = 0; i < int.parse(noOfProducts ?? '1'); i++)
+                          TableRow(
+                            children: [
+                              isProductVerified
+                                  ? SizedBox(
+                                      height: 30,
+                                      child: Center(
+                                        child: Text(
+                                          productsId[i].toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displayLarge,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      height: 30,
+                                      child: Center(
+                                        child: Text(
+                                          nameControllers[i].text.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displayLarge,
+                                        ),
+                                      ),
+                                    ),
+                              for (var k = 0; k < 14; k++)
+                                SizedBox(
+                                  height: 30,
+                                  child: TextField(
+                                    maxLines: 1,
+                                    keyboardType: TextInputType.number,
+                                    controller: sizeControllers[i][k],
+                                    onChanged: (text) {
+                                      setState(() {
+                                        var total = 0;
+                                        for (var sum = 0; sum < 14; sum++) {
+                                          total = total +
+                                              int.parse(
+                                                  sizeControllers[i][sum].text);
+                                        }
+                                        totalEachSize[i] = total;
+                                      });
+                                    },
+                                    style: const TextStyle(fontSize: 18),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: const InputDecoration(
+                                      filled: false,
+                                      contentPadding: EdgeInsets.only(
+                                          left: 5, top: 5, right: 5),
+                                      border: OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(0))),
+                                    ),
+                                  ),
+                                ),
+                              SizedBox(
+                                height: 30,
+                                child: Center(
+                                  child: Text(
+                                    totalEachSize[i].toString(),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayLarge,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  )
+                : const SizedBox(),
+
             const SizedBox(
               height: 10,
             ),
@@ -1034,9 +1289,25 @@ class _AddSalesPageState extends State<AddSalesPage> {
                 Container(
                   margin: const EdgeInsets.only(right: 20),
                   child: TextButton(
-                    onPressed: ()  {
-                      
-                      Navigator.pop(context);
+                    onPressed: () async {
+                      TransactionModel transactionModel = TransactionModel(
+                        clientName: selectedClient!,
+                        transactionDate: DateTime.now().toString(),
+                        transactionType: widget.whatType,
+                        numberOfProducts: int.parse(noOfProducts!),
+                        needVat: isVATneeded,
+                        withVat: withVAT,
+                        totalNumberOfProducts:
+                            await calculateTotalNumberOfProducts(),
+                        totalAmount: grandTotal,
+                        productDetail: await getAllProductsDetails(), 
+                      );
+                      if (await createTransaction(transactionModel)) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      } else {
+                        print(false);
+                      }
                     },
                     child: Container(
                       height: 50,
@@ -1068,5 +1339,41 @@ class _AddSalesPageState extends State<AddSalesPage> {
         );
       },
     );
+  }
+
+  calculateTotalNumberOfProducts() {
+    int total = 0;
+    for (TextEditingController i in quantityControllers) {
+      total = total + int.parse(i.text);
+    }
+    return total;
+  }
+
+  getAllProductsDetails() async {
+    List<ProductDetail> productDetails = [];
+    for (int i = 0; i < int.parse(noOfProducts!); i++) {
+      print(productsId[i]);
+      productDetails.add(
+        ProductDetail(
+            productName: productsId[i],
+            numberOfProducts: int.parse(quantityControllers[i].text),
+            
+            productPrice: double.parse(
+              amountControllers[i].text,
+            ),
+            sizeDetail: await getSizeDetails(i)),
+      );
+    }
+    return productDetails;
+  }
+
+  getSizeDetails(int i) {
+    List<SizeDetail> sizeDetails = [];
+    for (int j = 0; j < 14; j++) {
+      sizeDetails.add(SizeDetail(
+          size: (j + 1).toString(),
+          numberOfProducts: int.parse(sizeControllers[i][j].text)));
+    }
+    return sizeDetails;
   }
 }
